@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+*.pdb
+*.idb
+*.txt
+*.tlog
+*.log
+*.ilk
+*.recipe
+*.user
+*.filters
+*.vcxproj
+*.sln
+*.ipch
+*.db
+ASCII znakovi/ASCII_Znakovi/.vs/ASCII_Znakovi/v17/.suo
+*.lock
+*.vsidx
