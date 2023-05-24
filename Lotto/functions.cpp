@@ -75,7 +75,8 @@ void checkGuesses(vector<unsigned>& playerGuesses, vector<unsigned>& lottoNumber
 			guessedNumbers.push_back(playerGuesses.at(i));
 	}
 
-	cout << "You guessed " << guessedNumbers.size() << " number(s):" << endl;
+	cout << "\n******************************************" << endl;
+	cout << "\nYou guessed " << guessedNumbers.size() << " number(s):" << endl;
 
 	if (guessedNumbers.size() > 0)
 	{

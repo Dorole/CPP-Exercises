@@ -48,3 +48,7 @@ ASCII znakovi/ASCII_Znakovi/.vs/ASCII_Znakovi/v17/.suo
 *.vsidx
 FizzBuzz/.vs/FizzBuzz/v17/.suo
 Lotto/.vs/Lotto/v17/.suo
+*.opendb
+*.db-shm
+*.db-wal
+VendingMachine_CoinAcceptor/.vs/VendingMachine_CoinAcceptor/v17/.suo
