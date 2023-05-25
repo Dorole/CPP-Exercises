@@ -4,10 +4,6 @@
 
 using namespace std;
 
-//Ukoliko aparat nema dovoljno kovanica za vratiti, treba odustati od kupovine, 
-//vratiti kupcu novac koji je ubacio, i ispisati razlog odustajanja.
-//Dodajte i opciju "Punjenje aparata", koja "ubaci" proizvode i kovanice u aparat.
-
 struct KolicineKovanica
 {
 	unsigned kolicina_2e;
@@ -33,20 +29,38 @@ KolicineKovanica pretvoriIznosUKolicine(float iznos)
 
 	const int centi_2e = 200, centi_1e = 100, centi_50c = 50, centi_20c = 20, centi_10c = 10;
 
-	kolicineZaPovrat.kolicina_2e = iznosUCentima / centi_2e;
-	iznosUCentima %= centi_2e;
+	while (iznosUCentima > 0)
+	{
+		if (iznosUCentima >= 200)
+		{
+			kolicineZaPovrat.kolicina_2e = iznosUCentima / centi_2e;
+			iznosUCentima %= centi_2e;
+		}
 
-	kolicineZaPovrat.kolicina_1e = iznosUCentima / centi_1e;
-	iznosUCentima %= centi_1e;
+		if (iznosUCentima >= 100)
+		{
+			kolicineZaPovrat.kolicina_1e = iznosUCentima / centi_1e;
+			iznosUCentima %= centi_1e;
+		}
 
-	kolicineZaPovrat.kolicina_50c = iznosUCentima / centi_50c;
-	iznosUCentima %= centi_50c;
+		if (iznosUCentima >= 50)
+		{
+			kolicineZaPovrat.kolicina_50c = iznosUCentima / centi_50c;
+			iznosUCentima %= centi_50c;
+		}
 
-	kolicineZaPovrat.kolicina_20c = iznosUCentima / centi_20c;
-	iznosUCentima %= centi_20c;
+		if (iznosUCentima >= 20)
+		{
+			kolicineZaPovrat.kolicina_20c = iznosUCentima / centi_20c;
+			iznosUCentima %= centi_20c;
+		}
 
-	kolicineZaPovrat.kolicina_10c = iznosUCentima / centi_10c;
-	iznosUCentima %= centi_10c;
+		if (iznosUCentima >= 10)
+		{
+			kolicineZaPovrat.kolicina_10c = iznosUCentima / centi_10c;
+			iznosUCentima %= centi_10c;
+		}
+	}
 
 	return kolicineZaPovrat;
 }
@@ -61,29 +75,28 @@ KolicineKovanica obracunajPovrat(float primljeniIznos, float cijena, float stanj
 		cout << "\nNedovoljno novca za povrat! Vracam primljeni iznos." << endl;
 		iznosZaPovrat = primljeniIznos;
 	}
-	else if (cijena > primljeniIznos)
-	{
-		cout << "\nNedovoljan primljeni iznos! Vracam primljeni iznos." << endl;
-		iznosZaPovrat = primljeniIznos;
-	}
 	else
 		iznosZaPovrat = primljeniIznos - cijena;
 
-	cout << "\n********** Povrat: **********" << endl;
+	//cout << "\n********** Povrat: **********" << endl;
 	cout << "Za povrat: EUR " << iznosZaPovrat << endl;
 
 	return pretvoriIznosUKolicine(iznosZaPovrat);
 }
 
-void ispisiKolicineZaPovrat(KolicineKovanica vraceneKovanice)
+void ispisiKolicineKovanica(KolicineKovanica kovanice)
 {
-	cout << "2 EUR: " << vraceneKovanice.kolicina_2e << endl;
-	cout << "1 EUR: " << vraceneKovanice.kolicina_1e << endl;
-	cout << "0.50 EUR: " << vraceneKovanice.kolicina_50c << endl;
-	cout << "0.20 EUR: " << vraceneKovanice.kolicina_20c << endl;
-	cout << "0.10 EUR: " << vraceneKovanice.kolicina_10c << endl;
+	if (kovanice.kolicina_2e)
+		cout << "2 EUR: " << kovanice.kolicina_2e << endl;
+	if (kovanice.kolicina_1e)
+		cout << "1 EUR: " << kovanice.kolicina_1e << endl;
+	if (kovanice.kolicina_50c)
+		cout << "0.50 EUR: " << kovanice.kolicina_50c << endl;
+	if (kovanice.kolicina_20c)
+		cout << "0.20 EUR: " << kovanice.kolicina_20c << endl;
+	if(kovanice.kolicina_10c)
+		cout << "0.10 EUR: " << kovanice.kolicina_10c << endl;
 }
-
 
 KolicineKovanica azurirajKolicineKovanica(KolicineKovanica& trenutneKolicine, KolicineKovanica& pomakKolicina, int predznak)
 {
@@ -205,11 +218,7 @@ struct Aparat
 	void ispisiStanjeKovanica()
 	{
 		cout << "\nTrenutno stanje aparata (kovanice):" << endl;
-		cout << "2 EUR: " << kolicineKovanica.kolicina_2e << endl;
-		cout << "1 EUR: " << kolicineKovanica.kolicina_1e << endl;
-		cout << "0.50 EUR: " << kolicineKovanica.kolicina_50c << endl;
-		cout << "0.20 EUR: " << kolicineKovanica.kolicina_20c << endl;
-		cout << "0.10 EUR: " << kolicineKovanica.kolicina_10c << endl;
+		ispisiKolicineKovanica(kolicineKovanica);
 	}
 
 	float iznosNovcaUAparatu()
@@ -228,31 +237,51 @@ struct Aparat
 		float ukupanZbroj = zbroj_2e + zbroj_1e + zbroj_50c + zbroj_20c + zbroj_10c;
 		return ukupanZbroj;
 	}
+
+	void azurirajKolicinuProizvoda(int index)
+	{
+		katalog[index].kolicinaProizvoda--;
+	}
+
+	void azurirajAparat(int index, KolicineKovanica odlazneKovanice)
+	{
+		azurirajKolicinuProizvoda(index);
+		kolicineKovanica = azurirajKolicineKovanica(kolicineKovanica, odlazneKovanice, -1);
+
+		ispisiStanjeProizvoda();
+		ispisiStanjeKovanica();
+
+		cout << "\nTrenutno stanje aparata (iznos): EUR " << iznosNovcaUAparatu() << endl;;
+	}
 };
 
-
-int main()
+int odaberiProizvod(Aparat aparat)
 {
-	Aparat aparat;
-	
-	// *************** INICIJALIZACIJA APARATA ***************
-	aparat.punjenjeAparata();
-	aparat.ispisiStanjeProizvoda();
-
-
-	// *************** ODABIR I PLACANJE ***************
-	cout << "\n********************" << endl;
-
 	int odabir{};
 	cout << "\nOdaberi proizvod upisom broja reda: ";
-	cin >> odabir;
 
+	RedProizvoda trenutniOdabir;
+
+	do
+	{
+		cin >> odabir;
+		trenutniOdabir = aparat.katalog[odabir];
+
+		if (trenutniOdabir.kolicinaProizvoda == 0)
+			cout << "Odabrani proizvod nije dostupan. Odaberi novi: ";
+
+	} while (trenutniOdabir.kolicinaProizvoda == 0);
+
+	return odabir;
+}
+
+float izvrsiPlacanje(RedProizvoda trenutniOdabir)
+{
 	float trenutnaUplata{};
 	float uplata{};
 
-	RedProizvoda trenutniOdabir = aparat.katalog[odabir];
 	cout << "\nUplati: EUR ";
-	
+
 	do
 	{
 		cin >> trenutnaUplata;
@@ -263,21 +292,47 @@ int main()
 
 	} while (trenutniOdabir.cijena > uplata);
 
-
-	// *************** OBRACUNI ***************
-	cout << "\n********************" << endl;
-
-	KolicineKovanica primljeneKovanice = pretvoriIznosUKolicine(uplata);
-	aparat.kolicineKovanica = azurirajKolicineKovanica(aparat.kolicineKovanica, primljeneKovanice, 1);
-
-	KolicineKovanica vraceneKovanice = obracunajPovrat(uplata, trenutniOdabir.cijena, aparat.iznosNovcaUAparatu());
-	ispisiKolicineZaPovrat(vraceneKovanice);
-	
-
-	// *************** AZURIRANJE STANJA APARATA ***************
-	cout << "\n********************" << endl;
-
-	aparat.kolicineKovanica = azurirajKolicineKovanica(aparat.kolicineKovanica, vraceneKovanice, -1);
-	aparat.ispisiStanjeKovanica();
-	cout << "\nTrenutno stanje aparata (iznos): EUR " << aparat.iznosNovcaUAparatu() << endl;;
+	return uplata;
 }
+
+
+int main()
+{
+	Aparat aparat;
+	
+	// *************** INICIJALIZACIJA APARATA ***************
+	aparat.punjenjeAparata();
+	aparat.ispisiStanjeProizvoda();
+
+	while (true)
+	{
+		// *************** ODABIR PROIZVODA ***************
+		cout << "\n********************" << endl;
+
+		int odabir = odaberiProizvod(aparat);
+		RedProizvoda trenutniOdabir = aparat.katalog[odabir];
+
+
+		// *************** PLACANJE ***************
+		float uplata = izvrsiPlacanje(trenutniOdabir);
+
+
+		// *************** OBRACUNI ***************
+		cout << "\n********************" << endl;
+
+		KolicineKovanica primljeneKovanice = pretvoriIznosUKolicine(uplata);
+		aparat.kolicineKovanica = azurirajKolicineKovanica(aparat.kolicineKovanica, primljeneKovanice, 1);
+
+		KolicineKovanica vraceneKovanice = obracunajPovrat(uplata, trenutniOdabir.cijena, aparat.iznosNovcaUAparatu());
+		ispisiKolicineKovanica(vraceneKovanice);
+
+
+		// *************** AZURIRANJE STANJA APARATA ***************
+		cout << "\n****************************************" << endl
+			<< endl;
+
+		aparat.azurirajAparat(odabir, vraceneKovanice);
+	}
+
+}
+
