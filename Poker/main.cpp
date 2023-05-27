@@ -1,4 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <random>
+#include <algorithm>
 
 using namespace std;
 
@@ -41,12 +44,10 @@ struct Card
 	Suit suit = CLUBS;
 	int value{};
 
-	string convertCardToString()
+	string convertFaceCardValueToString()
 	{
-		string name{};
-		string s_suit;
+		string name;
 
-		//convert value to string
 		if (value == 1)
 			name = "Ace";
 		else if (value == 11)
@@ -56,7 +57,14 @@ struct Card
 		else if (value == 13)
 			name = "Jack";
 
-		//convert suit to string
+		return name;
+
+	}
+
+	string convertSuitToString()
+	{
+		string s_suit;
+
 		switch (suit)
 		{
 		case CLUBS:
@@ -75,19 +83,99 @@ struct Card
 			break;
 		}
 
-		//hm value se printa kao char ili kao nista - work around
-		string cardName;
-		if (name != " ")
-			cardName = name + " of " + s_suit;
-		else
-			cardName = value + " of " + s_suit;
+		return s_suit;
+	}
 
-		return cardName;
+	void printCardName()
+	{
+		string suit = convertSuitToString();
+
+		if (value > 1 && value <= 10)
+			cout << value << " of " << suit << endl;
+		else
+			cout << convertFaceCardValueToString() << " of " << suit << endl;
 	}
 };
 
+struct DeckOfCards
+{
+	vector<Card> deck{};
+	vector<Card> drawnCards{};
+
+	void initDeck()
+	{
+		for (int i = 0; i < 13; i++)
+		{
+			int value = i + 1;
+			Card newClubsCard{ CLUBS, value };
+			Card newDiamondsCard{ DIAMONDS, value };
+			Card newHeartsCard{ HEARTS, value };
+			Card newSpadesCard{ SPADES, value };
+
+			deck.push_back(newClubsCard);
+			deck.push_back(newDiamondsCard);
+			deck.push_back(newHeartsCard);
+			deck.push_back(newSpadesCard);
+		}
+	}
+
+	//bool isCardAlreadyDrawn(Card& randomCard)
+	//{
+	//	for (int i = 0; i < drawnCards.size(); i++)
+	//	{
+	//		if (randomCard.suit == drawnCards[i].suit && randomCard.value == drawnCards[i].value)
+	//			return true;
+	//	}
+
+	//	return false;
+	//}
+
+	Card drawRandomCard()
+	{
+		random_device randDev;
+		mt19937 generator(randDev());
+
+		int min = 0;
+		int max = deck.size();
+		uniform_int_distribution<int> distribution(min, max);
+
+		/*int randomIndex{};
+		Card randomCard{};*/
+
+		//do
+		//{
+		//	randomIndex = distribution(generator);
+		//	randomCard = deck.at(randomIndex);
+
+		//} while (isCardAlreadyDrawn(randomCard));
+
+		int randomIndex = distribution(generator);
+		Card randomCard = deck.at(randomIndex);;
+
+		drawnCards.push_back(randomCard);
+		deck.erase(deck.begin() + randomIndex);
+				
+		return randomCard;
+	}
+
+};
+
+
 int main()
 {
-	Card card{ HEARTS, 3};
-	cout << card.convertCardToString() << endl;
+	Card card{ HEARTS, 3 };
+	DeckOfCards deck;
+
+	card.printCardName();
+	deck.initDeck();
+	cout << deck.deck.size() << endl;
+
+	for (int i = 0; i < 5; i++)
+	{
+		Card newCard = deck.drawRandomCard();
+		cout << "New card: ";
+		newCard.printCardName();
+		cout << "Deck size: " << deck.deck.size() << endl;
+		cout << "Drawn cards: " << deck.drawnCards.size() << endl;
+	}
 }
