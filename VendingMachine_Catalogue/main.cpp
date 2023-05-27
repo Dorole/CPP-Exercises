@@ -25,7 +25,11 @@ KolicineKovanica pretvoriIznosUKolicine(float iznos)
 {
 	KolicineKovanica kolicineZaPovrat{};
 
+	cout << "Float iznos " << iznos << endl;
+
 	int iznosUCentima = iznos * 100;
+
+	cout << "Iznos u centima " << iznosUCentima << endl;
 
 	const int centi_2e = 200, centi_1e = 100, centi_50c = 50, centi_20c = 20, centi_10c = 10;
 
