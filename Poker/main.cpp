@@ -29,18 +29,13 @@ using namespace std;
 //ispis svih karata svih igraca i karata na stolu
 #pragma endregion
 
-struct Chip 
-{
-	unsigned value{};
-};
-
-enum Suit
-{
-	CLUBS, DIAMONDS, HEARTS, SPADES 
-};
-
 struct Card
 {
+	enum Suit
+	{
+		CLUBS, DIAMONDS, HEARTS, SPADES
+	};
+
 	Suit suit = CLUBS;
 	int value{};
 
@@ -107,10 +102,10 @@ struct DeckOfCards
 		for (int i = 0; i < 13; i++)
 		{
 			int value = i + 1;
-			Card newClubsCard{ CLUBS, value };
-			Card newDiamondsCard{ DIAMONDS, value };
-			Card newHeartsCard{ HEARTS, value };
-			Card newSpadesCard{ SPADES, value };
+			Card newClubsCard{ Card::Suit::CLUBS, value };
+			Card newDiamondsCard{ Card::Suit::DIAMONDS, value };
+			Card newHeartsCard{ Card::Suit::HEARTS, value };
+			Card newSpadesCard{ Card::Suit::SPADES, value };
 
 			deck.push_back(newClubsCard);
 			deck.push_back(newDiamondsCard);
@@ -119,16 +114,16 @@ struct DeckOfCards
 		}
 	}
 
-	//bool isCardAlreadyDrawn(Card& randomCard)
-	//{
-	//	for (int i = 0; i < drawnCards.size(); i++)
-	//	{
-	//		if (randomCard.suit == drawnCards[i].suit && randomCard.value == drawnCards[i].value)
-	//			return true;
-	//	}
+	bool isCardAlreadyDrawn(Card& randomCard)
+	{
+		for (int i = 0; i < drawnCards.size(); i++)
+		{
+			if (randomCard.suit == drawnCards[i].suit && randomCard.value == drawnCards[i].value)
+				return true;
+		}
 
-	//	return false;
-	//}
+		return false;
+	}
 
 	Card drawRandomCard()
 	{
@@ -136,46 +131,112 @@ struct DeckOfCards
 		mt19937 generator(randDev());
 
 		int min = 0;
-		int max = deck.size();
+		int max = deck.size() - 1;
 		uniform_int_distribution<int> distribution(min, max);
 
-		/*int randomIndex{};
-		Card randomCard{};*/
-
-		//do
-		//{
-		//	randomIndex = distribution(generator);
-		//	randomCard = deck.at(randomIndex);
-
-		//} while (isCardAlreadyDrawn(randomCard));
-
 		int randomIndex = distribution(generator);
-		Card randomCard = deck.at(randomIndex);;
+		Card randomCard = deck.at(randomIndex);
 
 		drawnCards.push_back(randomCard);
 		deck.erase(deck.begin() + randomIndex);
 				
 		return randomCard;
 	}
-
 };
 
+struct Player 
+{
+	unsigned chipValue = 50;
+	vector<Card> myCards{};
+
+	void placeBet(unsigned value)
+	{
+		chipValue -= value;
+	}
+
+	void receiveCard(Card card)
+	{
+		myCards.push_back(card);
+	}
+};
+
+struct PokerGame 
+{
+	const int numberOfPlayers = 8;
+	const int numberOfCardsEachPlayer = 2;
+	const int numberOfCardsOnTable = 5;
+
+	vector<Player> players{};
+	vector<Card> table{};
+	DeckOfCards deck;
+
+	void initPlayers()
+	{
+		for (int i = 0; i < numberOfPlayers; i++)
+		{
+			Player player;
+			players.push_back(player);
+		}
+	}
+
+	void dealCardsToPlayers()
+	{
+		for (int i = 0; i < numberOfPlayers; i++)
+		{
+			for (int y = 0; y < numberOfCardsEachPlayer; y++)
+			{
+				Card randomCard = deck.drawRandomCard();
+				players[i].myCards.push_back(randomCard);
+			}
+		}
+	}
+
+	void dealCardsToTable()
+	{
+		for (int i = 0; i < numberOfCardsOnTable; i++)
+		{
+			Card randomCard = deck.drawRandomCard();
+			table.push_back(randomCard);
+		}
+	}
+
+	void play()
+	{
+		initPlayers();
+		deck.initDeck();
+
+		dealCardsToPlayers();
+		dealCardsToTable();
+	}
+
+	void printSituation()
+	{
+		for (int i = 0; i < numberOfPlayers; i++)
+		{
+			cout << "\n***** Player " << (i + 1) << " *****" << endl;
+			Player currentPlayer = players[i];
+
+			for (int j = 0; j < numberOfCardsEachPlayer; j++)
+			{
+				Card thisCard = currentPlayer.myCards[j];
+				thisCard.printCardName();
+			}
+		}
+
+		cout << "\n***** Table *****" << endl;
+
+		for (int i = 0; i < table.size(); i++)
+		{
+			table[i].printCardName();
+		}
+	}
+};
 
 int main()
 {
-	Card card{ HEARTS, 3 };
-	DeckOfCards deck;
+	PokerGame game;
+	game.play();
 
-	card.printCardName();
-	deck.initDeck();
-	cout << deck.deck.size() << endl;
-
-	for (int i = 0; i < 5; i++)
-	{
-		Card newCard = deck.drawRandomCard();
-		cout << "New card: ";
-		newCard.printCardName();
-		cout << "Deck size: " << deck.deck.size() << endl;
-		cout << "Drawn cards: " << deck.drawnCards.size() << endl;
-	}
+	cout << "***** POKER GAME - INITIAL SITUATION *****" << endl;
+	game.printSituation();
 }
