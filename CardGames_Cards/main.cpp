@@ -18,6 +18,14 @@ int generateRandomInt(int min, int max)
 	return distribution(generator);
 }
 
+Card generateRandomCard(int min, int max)
+{
+	Card newCard{};
+	newCard.value = generateRandomInt(min, max);
+
+	return newCard;
+}
+
 
 int main()
 {
@@ -26,27 +34,9 @@ int main()
 	int min = 1;
 	int max = 52;
 
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
-
-	card.value = generateRandomInt(min, max);
-	cout << "Card value: " << card.value << endl;
+	for (int i = 0; i < 10; i++)
+	{
+		card = generateRandomCard(min, max);
+		cout << "Card value: " << card.value << endl;
+	}
 }
