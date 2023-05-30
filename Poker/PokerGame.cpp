@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
+#include "Card.h"
+#include "Player.h"
 #include "PokerGame.h"
+#include "DeckOfCards.h"
 
 using namespace std;
 
