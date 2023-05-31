@@ -1,7 +1,6 @@
 #include<iostream>
 #include<vector>
 #include<Windows.h>
-#include<ctime>
 
 using namespace std;
 
@@ -15,29 +14,6 @@ class TrafficLight
 	LightStates state = LightStates::INVALID;
 	string name = "placeholder";
 	
-	//duration in seconds
-	int invalidDuration = 10;
-	int redDuration = 5;
-	int yellowDuration = 3;
-	int greenDuration = 5;
-
-public:
-
-	LightStates getCurrentState()
-	{
-		return state;
-	}
-
-	void setCurrentState(LightStates newState)
-	{
-		state = newState;
-	}
-
-	void setName(string newName)
-	{
-		name = newName;
-	}
-
 	string stringCurrentState()
 	{
 		string currentState;
@@ -67,66 +43,11 @@ public:
 		return currentState;
 	}
 
-	int getLightDuration(LightStates state)
+public:
+
+	void setName(string newName)
 	{
-		int duration = 0;
-
-		switch (state)
-		{
-		case LightStates::RED:
-			duration = redDuration;
-			break;
-		case LightStates::YELLOWTOGREEN:
-			duration = yellowDuration;
-			break;
-		case LightStates::YELLOWTORED:
-			duration = yellowDuration;
-			break;
-		case LightStates::GREEN:
-			duration = greenDuration;
-			break;
-		case LightStates::INVALID:
-			duration = invalidDuration;
-			break;
-		default:
-			break;
-		};
-
-		return duration;
-	}
-
-	void switchStatesWSleep(int delay)
-	{
-		switch (state)
-		{
-		case LightStates::INVALID:
-			Sleep(invalidDuration * 1000);
-			state = LightStates::RED;
-			break;
-		case LightStates::RED:
-			Sleep((redDuration * 1000) + (delay * 1000));
-			state = LightStates::YELLOWTOGREEN;
-			break;
-		case LightStates::YELLOWTOGREEN:
-			Sleep(yellowDuration * 1000);
-			state = LightStates::GREEN;
-			break;
-		case LightStates::GREEN:
-			Sleep(greenDuration * 1000);
-			state = LightStates::YELLOWTORED;
-			break;
-		case LightStates::YELLOWTORED:
-			Sleep(yellowDuration * 1000);
-			state = LightStates::RED;
-			break;
-		default:
-			break;
-		}
-	}
-
-	void getNextState()
-	{
-
+		name = newName;
 	}
 
 	void switchStates()
@@ -162,9 +83,6 @@ public:
 
 class TrafficIntersection
 {
-	TrafficLight northLight, southLight, eastLight, westLight;
-
-	//TEST
 	vector<TrafficLight> northSouthLights;
 	vector<TrafficLight> eastWestLights;
 
@@ -172,39 +90,31 @@ class TrafficIntersection
 	bool firstRun = true;
 
 	//duration in seconds
-	int invalidDuration = 10;
-	int redDuration = 5;
-	int yellowDuration = 3;
-	int greenDuration = 5;
+	const int invalidDuration = 10;
+	const int redDuration = 5;
+	const int yellowDuration = 3;
+	const int greenDuration = redDuration;
 
-	void setNames()
-	{
-		northLight.setName("North");
-		southLight.setName("South");
-		eastLight.setName("East");
-		westLight.setName("West");
-	}
-
-	//TEST
 	void initLights()
-	{
-		setNames();
+	{	
+		TrafficLight northLight, southLight, eastLight, westLight;
 
+		//setNames();
+		
 		northSouthLights.push_back(northLight);
 		northSouthLights.push_back(southLight);
 		eastWestLights.push_back(eastLight);
 		eastWestLights.push_back(westLight);
 
+		northSouthLights.at(0).setName("North");
+		northSouthLights.at(1).setName("South");
+		eastWestLights.at(0).setName("East");
+		eastWestLights.at(1).setName("West");
+
 		init = true;
 	}
 
-	void synchLights(TrafficLight& light1, TrafficLight& light2)
-	{
-		LightStates stateToSet = light1.getCurrentState();
-		light2.setCurrentState(stateToSet);
-	}
-
-	void vectorSwitch(vector<TrafficLight>& lights)
+	void synchLights(vector<TrafficLight>& lights)
 	{
 		for (int i = 0; i < lights.size(); i++)
 		{
@@ -212,18 +122,6 @@ class TrafficIntersection
 		}
 	}
 
-public:
-
-	//individual lights
-	void printStates()
-	{
-		cout << northLight.printNameWState() << endl;
-		cout << southLight.printNameWState() << endl;
-		cout << eastLight.printNameWState() << endl;
-		cout << westLight.printNameWState() << endl;
-	}
-
-	//lights in a vector
 	void printStates(vector<TrafficLight>& v1, vector<TrafficLight>& v2)
 	{
 		vector<vector<TrafficLight>> allLights {v1, v2};
@@ -250,64 +148,10 @@ public:
 
 	}
 
-	//individual lights
+
+public:
+
 	void run()
-	{
-		if (!init)
-			setNames();
-		
-		while (true)
-		{
-			printStates();
-
-			if (firstRun)
-				Sleep(invalidDuration * 1000);
-			else
-				Sleep(yellowDuration * 1000);
-
-			northLight.switchStates();
-			synchLights(northLight, southLight);
-			eastLight.switchStates();
-			synchLights(eastLight, westLight);
-
-			printStates();
-			Sleep(redDuration * 1000);
-
-			northLight.switchStates();
-			synchLights(northLight, southLight);
-			if (!firstRun)
-			{
-				eastLight.switchStates();
-				synchLights(eastLight, westLight);
-			}
-
-			printStates();
-			Sleep(yellowDuration * 1000);
-
-			northLight.switchStates();
-			synchLights(northLight, southLight);
-			if (!firstRun)
-			{
-				eastLight.switchStates();
-				synchLights(eastLight, westLight);
-			}
-
-			printStates();
-			Sleep(greenDuration * 1000);
-
-			northLight.switchStates();
-			synchLights(northLight, southLight);
-			eastLight.switchStates();
-			synchLights(eastLight, westLight);
-
-			if (firstRun)
-				firstRun = false;
-		}
-
-	}
-
-	//lights in a vector
-	void testRun()
 	{
 		if (!init)
 			initLights();
@@ -321,38 +165,33 @@ public:
 			else
 				Sleep(yellowDuration * 1000);
 
-			vectorSwitch(northSouthLights);
-			vectorSwitch(eastWestLights);
+			synchLights(northSouthLights);
+			synchLights(eastWestLights);
 
 			printStates(northSouthLights, eastWestLights);
 			Sleep(redDuration * 1000);
 
-			vectorSwitch(northSouthLights);
+			synchLights(northSouthLights);
 			if (!firstRun)
-			{
-				vectorSwitch(eastWestLights);
-			}
-
+				synchLights(eastWestLights);
+			
 			printStates(northSouthLights, eastWestLights);
 			Sleep(yellowDuration * 1000);
 
-			vectorSwitch(northSouthLights);
+			synchLights(northSouthLights);
 			if (!firstRun)
-			{
-				vectorSwitch(eastWestLights);
-			}
-
+				synchLights(eastWestLights);
+			
 			printStates(northSouthLights, eastWestLights);
 			Sleep(greenDuration * 1000);
 
-			vectorSwitch(northSouthLights);
-			vectorSwitch(eastWestLights);
+			synchLights(northSouthLights);
+			synchLights(eastWestLights);
 
 			if (firstRun)
 				firstRun = false;
 		}
 	}
-
 	
 };
 
@@ -361,8 +200,6 @@ int main()
 {
 	TrafficIntersection trafficIntersection;
 
-	trafficIntersection.testRun();
-
-
+	trafficIntersection.run();
 
 }
