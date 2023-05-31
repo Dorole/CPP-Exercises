@@ -134,16 +134,6 @@ class TrafficIntersection
 			}
 		}
 
-		//for (int i = 0; i < v1.size(); i++)
-		//{
-		//	cout << v1.at(i).printNameWState() << endl;
-		//}
-		//
-		//for (int i = 0; i < v2.size(); i++)
-		//{
-		//	cout << v2.at(i).printNameWState() << endl;
-		//}
-
 		cout << "=================" << endl;
 
 	}
