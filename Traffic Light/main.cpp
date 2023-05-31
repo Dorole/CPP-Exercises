@@ -164,12 +164,18 @@ class TrafficIntersection
 {
 	TrafficLight northLight, southLight, eastLight, westLight;
 
+	//TEST
 	vector<TrafficLight> northSouthLights;
 	vector<TrafficLight> eastWestLights;
-	vector<vector<TrafficLight>> allLights;
 
-	bool init = false; // ovo u neki init prebaci
+	bool init = false; 
 	bool firstRun = true;
+
+	//duration in seconds
+	int invalidDuration = 10;
+	int redDuration = 5;
+	int yellowDuration = 3;
+	int greenDuration = 5;
 
 	void setNames()
 	{
@@ -179,6 +185,7 @@ class TrafficIntersection
 		westLight.setName("West");
 	}
 
+	//TEST
 	void initLights()
 	{
 		setNames();
@@ -187,9 +194,6 @@ class TrafficIntersection
 		northSouthLights.push_back(southLight);
 		eastWestLights.push_back(eastLight);
 		eastWestLights.push_back(westLight);
-
-		allLights.push_back(northSouthLights);
-		allLights.push_back(eastWestLights);
 
 		init = true;
 	}
@@ -200,47 +204,17 @@ class TrafficIntersection
 		light2.setCurrentState(stateToSet);
 	}
 
+	void vectorSwitch(vector<TrafficLight>& lights)
+	{
+		for (int i = 0; i < lights.size(); i++)
+		{
+			lights.at(i).switchStates();
+		}
+	}
 
 public:
 
-	void run()
-	{
-		if (!init)
-			initLights();
-		
-		//cout << "Started northSouth" << endl;
-		//northLight.switchStates(0);
-		//synchLights(northLight, southLight);
-		//printStates();
-
-		//cout << "Started eastWest" << endl;
-		//if (eastLight.getCurrentState() == LightStates::RED && firstRun)
-		//{
-		//	int delay = eastLight.getLightDuration(LightStates::YELLOWTOGREEN) + eastLight.getLightDuration(LightStates::GREEN);
-		//	eastLight.switchStates(delay);
-
-		//	firstRun == false;
-		//}
-		//else
-		//	eastLight.switchStates(0);
-
-		//synchLights(eastLight, westLight);
-		//printStates();
-	}
-
-
-	void test()
-	{
-		if (!init)
-			initLights();
-
-		cout << "Started northSouth" << endl;
-		northLight.switchStates();
-		cout << "Started eastWest" << endl;
-		eastLight.switchStates();
-
-	}
-
+	//individual lights
 	void printStates()
 	{
 		cout << northLight.printNameWState() << endl;
@@ -248,6 +222,138 @@ public:
 		cout << eastLight.printNameWState() << endl;
 		cout << westLight.printNameWState() << endl;
 	}
+
+	//lights in a vector
+	void printStates(vector<TrafficLight>& v1, vector<TrafficLight>& v2)
+	{
+		vector<vector<TrafficLight>> allLights {v1, v2};
+
+		for (int i = 0; i < allLights.size(); i++)
+		{
+			for (int j = 0; j < allLights[i].size(); j++)
+			{
+				cout << allLights[i][j].printNameWState() << endl;
+			}
+		}
+
+		//for (int i = 0; i < v1.size(); i++)
+		//{
+		//	cout << v1.at(i).printNameWState() << endl;
+		//}
+		//
+		//for (int i = 0; i < v2.size(); i++)
+		//{
+		//	cout << v2.at(i).printNameWState() << endl;
+		//}
+
+		cout << "=================" << endl;
+
+	}
+
+	//individual lights
+	void run()
+	{
+		if (!init)
+			setNames();
+		
+		while (true)
+		{
+			printStates();
+
+			if (firstRun)
+				Sleep(invalidDuration * 1000);
+			else
+				Sleep(yellowDuration * 1000);
+
+			northLight.switchStates();
+			synchLights(northLight, southLight);
+			eastLight.switchStates();
+			synchLights(eastLight, westLight);
+
+			printStates();
+			Sleep(redDuration * 1000);
+
+			northLight.switchStates();
+			synchLights(northLight, southLight);
+			if (!firstRun)
+			{
+				eastLight.switchStates();
+				synchLights(eastLight, westLight);
+			}
+
+			printStates();
+			Sleep(yellowDuration * 1000);
+
+			northLight.switchStates();
+			synchLights(northLight, southLight);
+			if (!firstRun)
+			{
+				eastLight.switchStates();
+				synchLights(eastLight, westLight);
+			}
+
+			printStates();
+			Sleep(greenDuration * 1000);
+
+			northLight.switchStates();
+			synchLights(northLight, southLight);
+			eastLight.switchStates();
+			synchLights(eastLight, westLight);
+
+			if (firstRun)
+				firstRun = false;
+		}
+
+	}
+
+	//lights in a vector
+	void testRun()
+	{
+		if (!init)
+			initLights();
+
+		while (true)
+		{
+			printStates(northSouthLights, eastWestLights);
+
+			if (firstRun)
+				Sleep(invalidDuration * 1000);
+			else
+				Sleep(yellowDuration * 1000);
+
+			vectorSwitch(northSouthLights);
+			vectorSwitch(eastWestLights);
+
+			printStates(northSouthLights, eastWestLights);
+			Sleep(redDuration * 1000);
+
+			vectorSwitch(northSouthLights);
+			if (!firstRun)
+			{
+				vectorSwitch(eastWestLights);
+			}
+
+			printStates(northSouthLights, eastWestLights);
+			Sleep(yellowDuration * 1000);
+
+			vectorSwitch(northSouthLights);
+			if (!firstRun)
+			{
+				vectorSwitch(eastWestLights);
+			}
+
+			printStates(northSouthLights, eastWestLights);
+			Sleep(greenDuration * 1000);
+
+			vectorSwitch(northSouthLights);
+			vectorSwitch(eastWestLights);
+
+			if (firstRun)
+				firstRun = false;
+		}
+	}
+
+	
 };
 
 
@@ -255,8 +361,7 @@ int main()
 {
 	TrafficIntersection trafficIntersection;
 
-	while (true)
-		trafficIntersection.run();
+	trafficIntersection.testRun();
 
 
 
