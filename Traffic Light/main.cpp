@@ -78,6 +78,11 @@ public:
 	{
 		return name + ": " + stringCurrentState();
 	}
+
+	bool checkState(LightStates controlState)
+	{
+		return state == controlState;
+	}
 };
 
 
@@ -87,7 +92,6 @@ class TrafficIntersection
 	vector<TrafficLight> eastWestLights;
 
 	bool init = false; 
-	bool firstRun = true;
 
 	//duration in seconds
 	const int invalidDuration = 10;
@@ -138,6 +142,15 @@ class TrafficIntersection
 
 	}
 
+	void sleep(int seconds)
+	{
+		Sleep(seconds * 1000);
+	}
+
+	bool checkState(vector<TrafficLight>& lights, LightStates state)
+	{
+		return lights.at(0).checkState(state);
+	}
 
 public:
 
@@ -146,50 +159,121 @@ public:
 		if (!init)
 			initLights();
 
+		bool firstRun = true;
+		int timer{};
+		printStates(northSouthLights, eastWestLights);
+
+		//RUN THIS FOR THE FIRST CYCLE
+		do
+		{
+			timer++;
+
+			if (timer < invalidDuration)
+			{
+				//LIGHTS DEFAULT
+			}
+			else if (timer < invalidDuration + redDuration)
+			{
+				//RED
+				if (!checkState(northSouthLights, LightStates::RED))
+				{
+					synchLights(northSouthLights);
+					synchLights(eastWestLights);
+				}
+			}
+			else if (timer < invalidDuration + redDuration + yellowDuration)
+			{
+				//YELLOW
+				if (!checkState(northSouthLights, LightStates::YELLOWTOGREEN))
+					synchLights(northSouthLights);
+			}
+			else if (timer < invalidDuration + redDuration + yellowDuration + greenDuration)
+			{
+				//GREEN
+				if (!checkState(northSouthLights, LightStates::GREEN))
+					synchLights(northSouthLights);
+			}
+			else if (timer < invalidDuration + redDuration + (2 * yellowDuration) + greenDuration)
+			{
+				//YELLOW
+				if (!checkState(northSouthLights, LightStates::YELLOWTORED))
+				{
+					synchLights(northSouthLights);
+					synchLights(eastWestLights);
+				}
+			}
+			else
+			{
+				firstRun = false;
+				timer = 0;
+				continue;
+			}
+
+			sleep(1);
+			printStates(northSouthLights, eastWestLights);
+
+		} while (firstRun);
+
+		//RUN THIS FOR EVERY FOLLOWING CYCLE
 		while (true)
 		{
-			printStates(northSouthLights, eastWestLights);
+			timer++;
 
-			if (firstRun)
-				Sleep(invalidDuration * 1000);
+			if (timer <= redDuration)
+			{
+				if (!checkState(northSouthLights, LightStates::RED))
+				{
+					//RED
+					synchLights(northSouthLights);
+					//GREEN
+					synchLights(eastWestLights);
+				}
+			}
+			else if (timer <= redDuration + yellowDuration)
+			{
+				//YELLOW
+				if (!checkState(northSouthLights, LightStates::YELLOWTOGREEN))
+				{
+					synchLights(northSouthLights);
+					synchLights(eastWestLights);
+				}
+			}
+			else if (timer <= redDuration + yellowDuration + greenDuration)
+			{
+				if (!checkState(northSouthLights, LightStates::GREEN))
+				{
+					//GREEN
+					synchLights(northSouthLights);
+					//RED
+					synchLights(eastWestLights);
+				}
+			}
+			else if (timer <= redDuration + (2 * yellowDuration) + greenDuration)
+			{
+				//YELLOW
+				if (!checkState(northSouthLights, LightStates::YELLOWTORED))
+				{
+					synchLights(northSouthLights);
+					synchLights(eastWestLights);
+				}
+			}
 			else
-				Sleep(yellowDuration * 1000);
-
-			synchLights(northSouthLights);
-			synchLights(eastWestLights);
-
-			printStates(northSouthLights, eastWestLights);
-			Sleep(redDuration * 1000);
-
-			synchLights(northSouthLights);
-			if (!firstRun)
-				synchLights(eastWestLights);
+			{
+				timer = 0;
+				continue;
+			}
 			
+			sleep(1);
 			printStates(northSouthLights, eastWestLights);
-			Sleep(yellowDuration * 1000);
-
-			synchLights(northSouthLights);
-			if (!firstRun)
-				synchLights(eastWestLights);
-			
-			printStates(northSouthLights, eastWestLights);
-			Sleep(greenDuration * 1000);
-
-			synchLights(northSouthLights);
-			synchLights(eastWestLights);
-
-			if (firstRun)
-				firstRun = false;
 		}
 	}
-	
 };
 
 
 int main()
 {
 	TrafficIntersection trafficIntersection;
-
+	
 	trafficIntersection.run();
 
 }
