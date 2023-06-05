@@ -9,6 +9,7 @@ enum class LightStates
 	RED, YELLOWTOGREEN, GREEN, YELLOWTORED, INVALID
 };
 
+
 class TrafficLight
 {
 	LightStates state = LightStates::INVALID;
