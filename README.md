@@ -2,7 +2,7 @@
 
 ## Contents:
 
-### 1. Luhn Digit Calculator
+### 1. [Luhn Digit Calculator](Luhn Digit Calculator)
 The program asks for a card number input. If none is given, the program uses the default number.</br> 
 Then, the program determines the card type, calculates the final digit and displays the entire number.
 ### 2. Criss-Cross 
@@ -42,6 +42,18 @@ The program then calculates the difference to return (if there is any), displays
 ### 9. Cards
 The program generates a random Card with a value between 1 and 52 and displays the value of the card.
 ### 10. Poker
+A basic Poker engine.</br>
+The program initializes 8 players with 50 chips and deals each player 2 cards, then it deals 5 cards to the table and prints which player (and the table) holds which cards. Each card is unique and is dealt randomly from a classic Poker deck of 52 cards.
 ### 11. Traffic Light
+The program simulates an intersection with 4 traffic lights. The lights switch colors in pairs.</br>
+The program prints the current situation on each traffic light every second.
 ### 12. Chat Filter
+The program simulates a chat filter which censors a given "forbidden" word.</br>
+The function CensorText takes in a string containing original text, a string with a word to censor and a character which will replace every letter of the forbidden word. The program is tested on three cases: a case with nothing to censor, a case with the forbidden word appearing once, and a case with the forbidden word appearing twice - once normally and once in rAndOmCaSe. </br>
+The forbidden word that is tested is "Voldemort".
 ### 13. Autocapitalize
+The program finds the first letter in a sentence and capitalizes it. It can also turn all other letters to lowercase, unless the word is starting with an uppercase (e.g. a name).
+### 14. Caesar Cipher
+The program performs the Caesar Cipher on a given string with a given key. The user can choose whether he wants to encrypt or decrypt, is prompted for a text to encrypt/decrypt and a key (both left and right shift are supported). The program then returns the encryption/decryption result.
+### 15. SFML: Display Image
+An exercise in using the SFML external library. The program creates a window with the size 1920x1080 and displays an image in it.
