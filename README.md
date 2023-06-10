@@ -2,7 +2,7 @@
 
 ## Contents:
 
-### 1. [Luhn Digit Calculator](Luhn Digit Calculator)
+### 1. Luhn Digit Calculator
 The program asks for a card number input. If none is given, the program uses the default number.</br> 
 Then, the program determines the card type, calculates the final digit and displays the entire number.
 ### 2. Criss-Cross 
