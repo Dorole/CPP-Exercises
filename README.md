@@ -57,3 +57,9 @@ The program finds the first letter in a sentence and capitalizes it. It can also
 The program performs the Caesar Cipher on a given string with a given key. The user can choose whether he wants to encrypt or decrypt, is prompted for a text to encrypt/decrypt and a key (both left and right shift are supported). The program then returns the encryption/decryption result.
 ### 15. SFML: Display Image
 An exercise in using the SFML external library. The program creates a window with the size 1920x1080 and displays an image in it.
+### 16. Letter Pyramid
+The program takes in a string input and creates a pyramid from it.</br>
+Example output:</br>
+</br>
+![Letter Pyramid: example output](https://github.com/Dorole/CPP-Exercises/assets/35565194/5be4ca15-d5ad-449f-b35c-3aba6ef22d6c)
+
